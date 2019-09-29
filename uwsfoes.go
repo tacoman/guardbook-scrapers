@@ -64,7 +64,6 @@ func main() {
 	// On every a element which has href attribute call callback
 	rosterCollector.OnHTML("tr", func(e *colly.HTMLElement) {
 		e.ForEach(".name > a[href]", func(_ int, el *colly.HTMLElement) { 
-			fmt.Println("Next page link found:", el.Attr("href"))
 			playerCollector.Visit(el.Attr("href"))
 		})
 	})
@@ -78,20 +77,16 @@ func main() {
 		if(len(dataPieces) > 1) {
 			positionInfo := strings.Split(dataPieces[1], "·")
 			player.SquadNumber = strings.Trim(positionInfo[0], " #")
-			player.Position = positionInfo[1]
-			fmt.Println(player)
+			if(len(positionInfo) > 1) {
+				player.Position = positionInfo[1]
+			} else {
+				player.Position = ""
+			}
 		} else {
 			player.SquadNumber = "0"
 			player.Position = "";
 		}
 		foes[rosterName].Players = append(foes[rosterName].Players, player)
-		//player.SquadNumber = e.ChildText(".data-number")
-		//if player.SquadNumber == "#" {
-		//	return
-		//}
-		//player.Name = e.ChildText(".data-name")
-		//player.Position := e.ChildText(".data-position")		
-		//foes[i].Players = append(foes[i].Players, player)
 	})
 
 	// Before making a request print "Visiting ..."
@@ -109,8 +104,14 @@ func main() {
 
 	f, _ := os.Create("uws-foes.json")
 	defer f.Close()
-	
-	b, err := json.Marshal(foes)
+
+	foesList := make([]Foe, len(foes))
+	idx := 0
+    for  _, value := range foes {
+       foesList[idx] = *value
+       idx++
+    }
+	b, err := json.Marshal(foesList)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
