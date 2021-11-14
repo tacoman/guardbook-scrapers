@@ -8,6 +8,9 @@ import json
 import os
 import re
 
+def atoi(text):
+    return int(text) if text.isdigit() else 0
+
 DB_URL = os.environ.get('DB_URL')
 
 driver = webdriver.Firefox()
@@ -52,6 +55,7 @@ for url in rosterUrls:
             player["name"] = row.find_element(By.CLASS_NAME, "Opta-Name").text
             player["position"] = currentPosition
             foe["players"].append(player)
+    foe["players"] = sorted(foe["players"], key=lambda x: atoi(x["squadNumber"]))
     foes.append(foe)
 
 driver.close()
