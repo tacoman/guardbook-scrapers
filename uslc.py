@@ -3,7 +3,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.color import Color
+from pymongo import MongoClient
 import json
+import os
+import re
+
+DB_URL = os.environ.get('DB_URL')
 
 driver = webdriver.Firefox()
 driver.get("https://www.uslchampionship.com/league-teams")
@@ -54,3 +59,21 @@ driver.close()
 foeJSON = json.dumps(foes, ensure_ascii=False)
 with open('foes.json', 'w') as f:
     f.write(foeJSON)
+
+client = MongoClient(DB_URL)
+db = client.ngsdetroit
+
+for foe in foes:
+    if foe["players"] == []: continue
+    dbFoe = db.foes.find_one({"opponent": re.compile('^' + foe["opponent"] + '$', re.IGNORECASE), "competition": foe["competition"]})
+    if dbFoe == None:
+        foe["active"] = True
+        db.foes.insert_one(foe)
+    else:
+        dbFoe["players"] = foe["players"]
+        db.foes.save(dbFoe)
+
+# case insensitive mongodb search on foe + competition
+# if present: update player list and ONLY player list, update
+# if not present: insert new record with everything (name, colors, etc)
+client.close()
