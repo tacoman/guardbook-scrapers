@@ -1,2 +1,4 @@
 foes.json
 env/
+vars.env
+run-usl-job.sh

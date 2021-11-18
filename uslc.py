@@ -32,6 +32,8 @@ for url in rosterUrls:
     foe = {}
     foe["players"] = []
     foe["opponent"] = teamInfo.find_element(By.TAG_NAME, "h1").text
+    if(foe["opponent"]) == "DETROIT CITY FC":
+        continue;
     foe["competition"] = "USL Championship"
     foe["textColor"] = "#000000"
     foe["backgroundColor"] = "#ffffff"
