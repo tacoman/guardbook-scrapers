@@ -23,7 +23,7 @@ for url in rosterUrls:
     driver.get(url)
     teamInfo = driver.find_element(By.CLASS_NAME, "teamInfo")
     print(teamInfo.find_element(By.TAG_NAME, "h1").text)
-    element = WebDriverWait(driver, 10).until(
+    element = WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.CLASS_NAME, "Opta-Team"))
     )
     rosterTable = driver.find_element(By.CLASS_NAME, "Opta-Team")
