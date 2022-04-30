@@ -17,6 +17,8 @@ driver = webdriver.Firefox()
 driver.get("https://www.uslchampionship.com/league-teams")
 rosterLinks = driver.find_elements(By.XPATH, "//*[text()='Roster']")
 rosterUrls = [x.get_attribute("href") for x in rosterLinks]
+rosterUrls.append("https://www.uslchampionship.com/new-york-red-bulls-ii-roster")
+rosterUrls.sort()
 print(rosterUrls)
 foes = []
 for url in rosterUrls:
